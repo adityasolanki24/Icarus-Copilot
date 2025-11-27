@@ -298,17 +298,10 @@ python -m agents.mission_planner
 - [x] Database persistence layer
 - [ ] ROS2 waypoint file generation
 - [ ] Obstacle avoidance planning integration
-- [ ] Real-time weather API integration
-- [ ] Mission simulation and validation
-- [ ] Web-based mission planning interface
+
 
 ---
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## Contact
 
