@@ -29,7 +29,7 @@ Mission Copilot directly supports **Project Icarus**, my broader engineering ini
 
 ##  Background: Project Icarus
 
-**Project Icarus** is a long-term personal project where I am building a complete autonomous drone system with the following objectives:
+**Project Icarus** is a long-term personal project where I am building a complete autonomous drone system , more about Project Icarus:https://github.com/adityasolanki24/Project-Icarus
 
 
 **Mission Copilot fills a critical gap** by providing an automated, engineer-level mission planning system that generates accurate, repeatable, and execution-ready flight plans.
