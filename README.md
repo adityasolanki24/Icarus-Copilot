@@ -44,9 +44,9 @@ Mission Copilot uses a **multi-agent architecture** built on Google ADK. The sys
 graph TD
     A[User Input: Natural Language] --> B[Root Orchestrator Agent]
     B --> C[Mission Planner Agent]
-    B --> D[Coverage & Trajectory Agent]
-    B --> E[ROS Configuration Agent]
-    B --> F[Documentation Agent]
+    C --> D[Coverage & Trajectory Agent]
+    D --> E[ROS Configuration Agent]
+    D --> F[Documentation Agent]
     C --> G[Mission Package]
     D --> G
     E --> G
