@@ -1,4 +1,4 @@
-# 🚁 Project Icarus — Mission Copilot
+# Project Icarus — Mission Copilot
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Google ADK](https://img.shields.io/badge/Google-ADK-4285F4.svg)](https://github.com/google/adk)
@@ -10,13 +10,13 @@
 
 ---
 
-## 📋 Overview
+##  Overview
 
 **Mission Copilot** is an AI-powered mission-planning system built with the **Google Agent Development Kit (ADK)** that generates complete, flight-ready mission packages for autonomous UAV operations. Developed as part of the **Google × Kaggle Agents Intensive Capstone**, this system eliminates manual mission planning by transforming natural language descriptions into structured, executable flight plans.
 
 Mission Copilot directly supports **Project Icarus**, my broader engineering initiative focused on building a fully autonomous drone platform capable of real-time mapping, computer vision tasks, and advanced mission execution.
 
-### ✨ Key Features
+###  Key Features
 
 - **Natural Language Mission Planning** — Describe missions in plain English
 - **Automated Coverage Path Calculations** — Optimized for mapping, surveying, and reconnaissance
@@ -27,7 +27,7 @@ Mission Copilot directly supports **Project Icarus**, my broader engineering ini
 
 ---
 
-## 🎯 Background: Project Icarus
+##  Background: Project Icarus
 
 **Project Icarus** is a long-term personal project where I am building a complete autonomous drone system with the following objectives:
 
@@ -36,7 +36,7 @@ Mission Copilot directly supports **Project Icarus**, my broader engineering ini
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 Mission Copilot uses a **multi-agent architecture** built on Google ADK. The system consists of specialized agents working together:
 
@@ -53,7 +53,7 @@ graph TD
     F --> G
 ```
 
-### 🤖 Agent Breakdown
+###  Agent Breakdown
 
 | Agent | Responsibility |
 |-------|----------------|
@@ -65,7 +65,7 @@ graph TD
 
 ---
 
-## 📂 Repository Structure
+##  Repository Structure
 
 ```
 Capstone-agent/
@@ -148,7 +148,7 @@ PROJECT_NAME = "Agents Intensive Capstone"
 
 ---
 
-## 💻 Usage
+##  Usage
 
 ### Basic Mission Planning
 
