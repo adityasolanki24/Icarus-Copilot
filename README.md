@@ -328,15 +328,9 @@ python -m agents.mission_planner
 - [ ] Real-time weather API integration
 - [ ] Mission simulation and validation
 - [ ] Web-based mission planning interface
-- [ ] Vertex AI Memory Bank integration (semantic search)
 
 ---
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## Contact
 
