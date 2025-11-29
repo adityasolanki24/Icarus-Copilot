@@ -37,35 +37,50 @@ Mission Copilot directly supports **Project Icarus**, my broader engineering ini
 
 ## System Architecture
 
-Mission Copilot uses a **multi-agent architecture** built on Google ADK. The system consists of specialized agents working together:
+Mission Copilot uses a **multi-agent pipeline architecture** built on Google ADK with sequential and parallel execution patterns:
 
 ```
 User Input (Natural Language)
     ↓
-Mission Planner Agent
-    → Generates mission specification
-    → Looks up regulatory requirements
-    → Calculates estimated flight parameters
+┌─────────────────────────────────────────┐
+│   Mission Planner Agent                 │
+│   → Parses natural language             │
+│   → Looks up regulations (Google Search)│
+│   → Generates mission spec JSON         │
+└─────────────────────────────────────────┘
     ↓
-Database Persistence
-    → Saves mission to SQLite
-    → Returns mission_id
+┌─────────────────────────────────────────┐
+│   Database Saver Agent                  │
+│   → Saves mission to SQLite             │
+│   → Returns mission_id                  │
+└─────────────────────────────────────────┘
     ↓
-Coverage Agent
-    → Calculates optimal flight path (lawnmower pattern)
-    → Determines leg spacing and swath width
-    → Estimates flight time and battery segments
+┌─────────────────────────────────────────┐
+│   Coverage Agent                        │
+│   → Calculates lawnmower pattern        │
+│   → Determines swath width & leg spacing│
+│   → Estimates flight time & batteries   │
+└─────────────────────────────────────────┘
     ↓
-Mission Package Complete
+┌──────────────────────┬──────────────────────┐
+│  ROS Config Agent    │  Documentation Agent │
+│  (Parallel)          │  (Parallel)          │
+│  → Waypoints JSON    │  → Mission Brief MD  │
+│  → ROS2 config       │  → Flight summary    │
+└──────────────────────┴──────────────────────┘
+    ↓
+Mission Package saved to missions/{mission_id}/
 ```
 
 ### Agent Breakdown
 
-| Agent | Responsibility |
-|-------|----------------|
-| **Mission Planner Agent** | Interprets natural-language mission descriptions, searches for local regulations using Google Search, and creates structured mission specifications with area dimensions, altitude, camera parameters, and regulatory compliance notes |
-| **Coverage Agent** | Calculates flight coverage patterns using camera FOV and altitude to determine swath width, generates lawnmower flight paths with specified overlap percentages, and estimates total flight distance and time |
-| **Database Repository** | Persists mission specifications to SQLite database, maintains mission history, and enables retrieval for further processing |
+| Agent | Type | Responsibility |
+|-------|------|----------------|
+| **Mission Planner** | Sequential | Interprets natural language requests, searches regulations via Google Search, generates structured mission specifications (area, altitude, camera FOV, overlap percentages) |
+| **Database Saver** | Sequential | Persists mission specs to SQLite, assigns mission_id, enables mission retrieval and history tracking |
+| **Coverage Agent** | Sequential | Calculates optimal flight paths using lawnmower patterns, determines swath width from camera FOV and altitude, estimates total flight time and battery requirements |
+| **ROS Config Agent** | Parallel | Generates ROS2-compatible waypoint files and configuration JSON for autonomous flight execution |
+| **Documentation Agent** | Parallel | Creates human-readable mission briefs with flight parameters, regulatory notes, and operational summaries |
 
 ---
 
@@ -73,22 +88,33 @@ Mission Package Complete
 
 ```
 Capstone-agent/
-├── main.py                     # Simple demo agent
-├── test_connection.py          # Network connectivity diagnostics
-├── agents/                     # Agent definitions and configurations
+├── main.py                          # Multi-agent pipeline orchestrator
+├── chat.py                          # Conversational copilot interface
+├── pipeline.py                      # Pipeline definition module
+├── test_connection.py               # Network connectivity diagnostics
+├── agents/                          # Agent definitions
 │   ├── __init__.py
-│   ├── mission_planner.py      # Mission planning with regulatory lookup
-│   └── coverage_agent.py       # Flight path coverage calculation
-├── tools/                      # Custom calculation tools
+│   ├── mission_planner.py           # Mission spec generation + regulatory lookup
+│   ├── coverage_agent.py            # Coverage path calculation
+│   ├── ros_config_agent.py          # ROS2 waypoint & config generation
+│   └── documentation_agent.py       # Mission brief creation
+├── tools/                           # Custom calculation tools
 │   ├── __init__.py
-│   └── coverage_calculator.py  # Lawnmower pattern generation
-├── mission_db/                 # Database persistence layer
+│   └── coverage_calculator.py       # Lawnmower pattern algorithms
+├── mission_db/                      # Database persistence
 │   ├── __init__.py
-│   └── mission_repo.py         # SQLite database operations
-├── missions/                   # Generated mission outputs (future)
-├── .env                        # Environment variables (not in repo)
+│   └── mission_repo.py              # SQLite operations
+├── missions/                        # Generated outputs (gitignored)
+│   ├── 1/
+│   │   ├── mission_brief.md
+│   │   ├── ros_waypoints.json
+│   │   └── ros_config.json
+│   └── .gitkeep
+├── .env                             # API keys (not in repo)
 ├── .gitignore
-└── README.md                   # This file
+├── missions.db                      # Mission database
+├── mission_copilot_sessions.db      # Chat sessions database
+└── README.md
 ```
 
 ---
@@ -151,45 +177,45 @@ DATABASE_PATH = "missions.db"
 
 ## Usage
 
-### Option 1: Run Complete Multi-Agent Pipeline
-
-```bash
-python main.py
-```
-
-This runs the full pipeline:
-1. Mission Planner: Generates spec with regulations
-2. Database Saver: Saves to SQLite
-3. Coverage Agent: Calculates flight paths
-4. Parallel Execution:
-   - ROS Config Agent: Generates waypoints
-   - Documentation Agent: Creates mission brief
-
-Output files saved to `missions/<mission_id>/`
-
-### Option 2: Chat with Your Copilot (NEW!)
+### Option 1: Interactive Chat Interface (Recommended)
 
 ```bash
 python chat.py
 ```
 
-Interactive conversational interface with:
-- **Session Management**: Conversations persist across restarts
-- **Memory**: Copilot remembers past missions and discussions
-- **Mission Queries**: Ask about any mission in the database
-- **Natural Language**: Chat naturally about your missions
+Natural language conversational interface with:
+- **Create Missions**: Describe missions in plain English
+- **Query Database**: Ask about any previous mission
+- **Session Memory**: Conversations persist across restarts
+- **Intelligent Validation**: Ensures all required parameters are provided
 
-Example conversation:
+Example:
 ```
-You: What missions do I have?
+You: Create a mission to map a 500m x 300m field at 70m altitude in Sydney
+Copilot: [Runs full pipeline, saves to missions/18/]
+
+You: What missions have I created?
 Copilot: [Lists all missions from database]
 
-You: Tell me about mission 5
-Copilot: [Shows full details of mission 5]
-
-You: What was the altitude for that Delhi mission?
-Copilot: [Recalls mission details from memory]
+You: Tell me about mission 18
+Copilot: [Shows full details including regulatory notes]
 ```
+
+### Option 2: Direct Pipeline Execution
+
+```bash
+python main.py
+```
+
+Runs the complete multi-agent pipeline programmatically:
+1. **Mission Planner**: Generates specification + regulations
+2. **Database Saver**: Persists to SQLite, returns mission_id
+3. **Coverage Agent**: Calculates flight path
+4. **Parallel Execution**:
+   - ROS Config Agent: Generates waypoints
+   - Documentation Agent: Creates mission brief
+
+Output saved to `missions/{mission_id}/`
 
 ### Option 3: Run Individual Agents
 
@@ -317,17 +343,27 @@ python -m agents.mission_planner
 
 ## Roadmap
 
-- [x] Mission specification generation with regulatory lookup
-- [x] Flight path coverage calculation
-- [x] Database persistence layer
-- [x] ROS2 waypoint file generation
-- [x] Multi-agent pipeline (Sequential + Parallel)
-- [x] Conversational copilot with session management
-- [x] Memory-enabled mission queries
-- [ ] Obstacle avoidance planning integration
-- [ ] Real-time weather API integration
-- [ ] Mission simulation and validation
-- [ ] Web-based mission planning interface
+**Completed:**
+- [x] Natural language mission specification generation
+- [x] Regulatory compliance lookup (Google Search integration)
+- [x] Automated coverage path planning (lawnmower patterns)
+- [x] Database persistence with SQLite
+- [x] ROS2 waypoint and configuration file generation
+- [x] Multi-agent pipeline architecture (Sequential + Parallel)
+- [x] Conversational chat interface with session management
+- [x] Memory-based mission queries and retrieval
+
+**In Progress:**
+- [ ] Enhanced input validation and error handling
+- [ ] Support for custom polygon survey areas
+- [ ] Mission editing and versioning
+
+**Future:**
+- [ ] Obstacle avoidance integration
+- [ ] Real-time weather API for flight feasibility
+- [ ] Mission simulation and 3D visualization
+- [ ] Web-based UI for mission planning
+- [ ] Integration with actual drone hardware (Project Icarus)
 
 ---
 
