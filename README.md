@@ -151,32 +151,62 @@ DATABASE_PATH = "missions.db"
 
 ## Usage
 
-### Running the Mission Planner
+### Option 1: Run Complete Multi-Agent Pipeline
 
+```bash
+python main.py
+```
+
+This runs the full pipeline:
+1. Mission Planner: Generates spec with regulations
+2. Database Saver: Saves to SQLite
+3. Coverage Agent: Calculates flight paths
+4. Parallel Execution:
+   - ROS Config Agent: Generates waypoints
+   - Documentation Agent: Creates mission brief
+
+Output files saved to `missions/<mission_id>/`
+
+### Option 2: Chat with Your Copilot (NEW!)
+
+```bash
+python chat.py
+```
+
+Interactive conversational interface with:
+- **Session Management**: Conversations persist across restarts
+- **Memory**: Copilot remembers past missions and discussions
+- **Mission Queries**: Ask about any mission in the database
+- **Natural Language**: Chat naturally about your missions
+
+Example conversation:
+```
+You: What missions do I have?
+Copilot: [Lists all missions from database]
+
+You: Tell me about mission 5
+Copilot: [Shows full details of mission 5]
+
+You: What was the altitude for that Delhi mission?
+Copilot: [Recalls mission details from memory]
+```
+
+### Option 3: Run Individual Agents
+
+**Mission Planner:**
 ```bash
 python agents/mission_planner.py
 ```
 
-This will:
-1. Generate a mission specification from the default user request
-2. Search for local drone regulations using Google Search
-3. Save the complete mission spec to the database
-4. Display the mission ID for reference
-
-### Running the Coverage Agent
-
+**Coverage Agent:**
 ```bash
 python agents/coverage_agent.py <mission_id>
 ```
 
-This will:
-1. Load the mission spec from the database
-2. Calculate optimal flight paths with specified overlap
-3. Output coverage summary including:
-   - Number of flight legs
-   - Total path distance
-   - Estimated flight time
-   - Battery segments required
+**ROS Config Agent:**
+```bash
+python agents/ros_config_agent.py <mission_id>
+```
 
 ### Example Mission Request
 
@@ -189,32 +219,26 @@ with a 78° FOV camera. I wanna fly it in Delhi
 """
 ```
 
-### Expected Output
+### Expected Output Structure
 
-**From Mission Planner:**
+**Mission Files (missions/<mission_id>/):**
 ```
-Mission #5 saved to missions.db
-(Use this mission_id for coverage, ROS config, etc.)
+missions/
+  ├── 1/
+  │   ├── mission_brief.md
+  │   ├── ros_waypoints.json
+  │   └── ros_config.json
+  ├── 2/
+  │   ├── mission_brief.md
+  │   ├── ros_waypoints.json
+  │   └── ros_config.json
+  └── ...
 ```
 
-**From Coverage Agent:**
+**Database:**
 ```
-Processing mission #5: Delhi crop health survey
-Request: I want to map a 500m x 300m field at 70m altitude...
-
-{
-  "coverage_summary": {
-    "sweep_direction": "along_length",
-    "swath_width_m": 147.3,
-    "leg_spacing_m": 51.6,
-    "num_legs": 6,
-    "leg_length_m": 500.0,
-    "total_path_length_m": 3000.0,
-    "total_flight_time_min": 6.25,
-    "num_battery_segments": 1
-  },
-  "legs": [...]
-}
+missions.db - Mission specs and history
+mission_copilot_sessions.db - Chat sessions (persistent)
 ```
 
 ---
@@ -296,11 +320,15 @@ python -m agents.mission_planner
 - [x] Mission specification generation with regulatory lookup
 - [x] Flight path coverage calculation
 - [x] Database persistence layer
-- [ ] ROS2 waypoint file generation
+- [x] ROS2 waypoint file generation
+- [x] Multi-agent pipeline (Sequential + Parallel)
+- [x] Conversational copilot with session management
+- [x] Memory-enabled mission queries
 - [ ] Obstacle avoidance planning integration
 - [ ] Real-time weather API integration
 - [ ] Mission simulation and validation
 - [ ] Web-based mission planning interface
+- [ ] Vertex AI Memory Bank integration (semantic search)
 
 ---
 

@@ -24,6 +24,7 @@ mission_planner = Agent(
     model="gemini-2.5-flash-lite",
     description="Plans autonomous UAV survey missions from high-level user requests.",
     tools=[google_search],
+    output_key="mission_spec",
     instruction=(
         "You are a UAV mission planner agent.\n"
         "Given a high-level request for mapping/surveying with a drone, "
