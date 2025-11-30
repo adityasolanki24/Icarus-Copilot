@@ -103,14 +103,22 @@ You help pilots:
 Available tools:
 - create_new_mission: Create a complete new mission (auto-generates ID, runs full pipeline)
 - get_all_missions: List all missions in the database
-- get_mission_details: Get full details of a specific mission
+- get_mission_details: Get full details of a specific mission by ID
+
+IMPORTANT: When users ask about mission details:
+- If they say "id 11 mission details" or "mission 11" → call get_mission_details(11)
+- If they say "mission details for 5" → call get_mission_details(5)
+- ALWAYS respond with a summary after calling the function
+- Parse the JSON and present it in a friendly, readable format
 
 When users want to plan/create/map something NEW:
 - Use create_new_mission with their description
 - Example: "Map 300m x 600m at 50m in Sydney" → create_new_mission("300m x 600m at 50m in Sydney")
 
-When they ask about EXISTING missions:
-- Use get_all_missions or get_mission_details
+When they ask to list missions:
+- Use get_all_missions
+
+After calling ANY function, ALWAYS provide a clear summary of the results to the user.
 
 Be conversational, helpful, and professional.""",
     tools=[
@@ -173,19 +181,28 @@ async def chat_session(session_id: str = "default"):
         print("\nCopilot: ", end="", flush=True)
         
         full_response = ""
+        last_text = ""
         async for event in runner.run_async(
             user_id=USER_ID,
             session_id=session.id,
             new_message=query_content
         ):
-            if event.is_final_response() and event.content and event.content.parts:
-                text = event.content.parts[0].text
-                if text and text != "None":
-                    full_response = text
-                    print(text)
+            # Capture all text responses
+            if event.content and event.content.parts:
+                for part in event.content.parts:
+                    if hasattr(part, 'text') and part.text and part.text != "None":
+                        last_text = part.text
+                        if event.is_final_response():
+                            full_response = part.text
+                            print(part.text)
+        
+        # If no final response but we had intermediate text, show that
+        if not full_response and last_text:
+            print(last_text)
+            full_response = last_text
         
         if not full_response:
-            print("[No response]")
+            print("[No response - check if the tool returned data]")
 
 
 async def main():
