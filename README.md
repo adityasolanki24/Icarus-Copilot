@@ -308,6 +308,50 @@ Connection successful! Status: 200
 
 ---
 
+## Deployment to Production
+
+Mission Copilot can be deployed to **Vertex AI Agent Engine** for production use with enterprise-grade infrastructure.
+
+### Quick Deploy
+
+```bash
+# Set your Google Cloud project
+export PROJECT_ID="your-google-cloud-project-id"
+export REGION="us-central1"
+
+# Deploy to Agent Engine
+adk deploy agent_engine \
+  --project=$PROJECT_ID \
+  --region=$REGION \
+  . \
+  --agent_engine_config_file=.agent_engine_config.json
+```
+
+### What You Get
+
+- **Managed Runtime**: Auto-scaling infrastructure
+- **Session Management**: Built-in conversation persistence
+- **Memory Bank**: Long-term knowledge across sessions
+- **Observability**: Integrated logging, tracing, and monitoring
+- **Enterprise Security**: VPC-SC, CMEK, IAM support
+- **REST API**: Accessible from any application
+
+### Cost Management
+
+- **Free Tier**: Agent Engine offers a monthly free tier
+- **Auto-scaling**: `min_instances: 0` scales to zero when idle
+- **Pay-per-use**: Only pay for active usage
+
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for complete deployment guide.
+
+### Alternative Deployment Options
+
+| Platform | Best For | Documentation |
+|----------|----------|---------------|
+| **Vertex AI Agent Engine** | Production, enterprise scale | [Deploy to Agent Engine](https://cloud.google.com/agent-builder/agent-development-kit/docs/deploy-agent-engine) |
+| **Cloud Run** | Simpler serverless deployment | [Deploy to Cloud Run](https://cloud.google.com/agent-builder/agent-development-kit/docs/deploy-cloud-run) |
+| **GKE** | Full containerized control | [Deploy to GKE](https://cloud.google.com/agent-builder/agent-development-kit/docs/deploy-gke) |
+
 ## Troubleshooting
 
 ### Common Issues
