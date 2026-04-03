@@ -1,0 +1,10 @@
+# Core
+python-dotenv>=1.0.0
+
+# LLM Providers - install the ones you need
+google-genai>=1.0.0            # Google Gemini
+openai>=1.0.0                  # OpenAI GPT / compatible APIs
+anthropic>=0.30.0              # Anthropic Claude
+
+# Web search (free, no API key needed)
+duckduckgo-search>=6.0.0
