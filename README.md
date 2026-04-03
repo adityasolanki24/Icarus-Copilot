@@ -436,23 +436,18 @@ python -m agents.mission_planner
 - [x] Multi-agent pipeline architecture (Sequential + Parallel)
 - [x] Conversational chat interface with session management
 - [x] Memory-based mission queries and retrieval
-<<<<<<< HEAD
-- [x] Integration with actual drone hardware (Project Icarus)
-=======
 - [x] **v2: Multi-provider support (Gemini, GPT, Claude)**
 - [x] **v2: Provider-agnostic agent framework (no ADK dependency)**
 - [x] **v2: Free web search via DuckDuckGo**
->>>>>>> dbc09d0 (V2)
+- [x] Web based ui for mission visualisation
 
 **In Progress:**
-- [ ] Enhanced input validation and error handling
-- [ ] Support for custom polygon survey areas
+- [ ] Better input validation and error handling
+- [ ] Voice based communication via Text to speech and speech to text tool(faster-whisper possibly?)
 - [ ] Mission editing and versioning
 
 **Future:**
 - [ ] Real-time weather API for flight feasibility
-- [ ] Obstacle avoidance integration
-- [ ] Mission simulation and 3D visualization
 - [ ] Integration with actual drone hardware (Project Icarus)
 
 ---
